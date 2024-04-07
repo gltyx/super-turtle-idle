@@ -72,6 +72,8 @@ function spawnEnemy(enemy) { //spawns enemy based on current difficulty and area
 
   if (currentEnemy===undefined || currentEnemy===NaN) currentEnemy="E1"; //failsafe to prevent error enemies
 
+  enemies[currentEnemy].sawOnce = true;
+
   const div = document.createElement("div");
   div.id = currentEnemy + "enemy";
   div.className = "enemy";
@@ -171,6 +173,7 @@ function enemyUpdate() { //updates enemy HP and checks if enemy is dead
       void did("rpgCanvas").offsetWidth;
       did("rpgCanvas").style.animation = "rpgFade 1s 1";
       stats.currentArea = previousArea;
+      if (areas[previousArea].dungeon) stats.currentArea = "A1";
       stats.currentDifficulty = previousDifficulty;
       dungeonPoints = 0;
       dungeonStage=0
@@ -329,7 +332,7 @@ function playerUpdate(){ //updates player HP and checks if its dead
 
   if (rpgPlayer.hp <= 0 && rpgPlayer.alive && !godmode) {
     rpgPlayer.hp = 0;
-    if (bossTime) { //if a boss kills the turtle
+    if (bossTime && buffs.B64.time<=0) { //if a boss kills the turtle
       bossTime = false;
       enemyDamageMultiplier = 1;
       enemyDefenseMultiplier = 1;
@@ -340,12 +343,13 @@ function playerUpdate(){ //updates player HP and checks if its dead
       did("rpgCanvas").style.animation = "rpgFade 1s 1";
       
     }
-    if (dungeonTime){
+    if (dungeonTime && buffs.B64.time<=0){
       dungeonTime=false;
       did("rpgCanvas").style.animation = "";
       void did("rpgCanvas").offsetWidth;
       did("rpgCanvas").style.animation = "rpgFade 1s 1";
       stats.currentArea = previousArea;
+      if (areas[previousArea].dungeon) stats.currentArea = "A1";
       stats.currentDifficulty = previousDifficulty;
       dungeonPoints = 0;
       dungeonStage=0
@@ -355,7 +359,7 @@ function playerUpdate(){ //updates player HP and checks if its dead
       deleteEnemy();
       
     }
-    if (showdownTime || skirmishTime){
+    if ((showdownTime || skirmishTime) && buffs.B64.time<=0){
       endShowdown();
       deleteEnemy();
       
@@ -428,7 +432,7 @@ function hpRegen() { //additionally manages death
     //if player alive
     if (rpgPlayer.hp < playerMaxHp && !bossTime && !dungeonTime && !showdownTime && !skirmishTime) rpgPlayer.hp += playerHpRegen/4;
     playerUpdate()
-    if (bossTime && rpgPlayer.hp===1) logs.L1P22A.unlocked=true
+    if (bossTime && rpgPlayer.hp<=playerMaxHp*0.01) logs.L1P22A.unlocked=true
     
   } else {
     //if player dead
@@ -582,14 +586,24 @@ function deleteEnemy(enemy) {  //deletes without loot, used in dungeons, bosses 
 
 function logPrint(print) {
   let hitLog = document.createElement("div");
-  hitLog.id = Math.random();
-  did("combatLog").appendChild(hitLog);
+  did("combatLog").prepend(hitLog);
   hitLog.className = "logMessage";
   hitLog.innerHTML = print;
   
-  if (did("combatLog").children.length >= 100)
-  did("combatLog").firstChild.remove();
+  if (did("combatLog").children.length >= 100) {did("combatLog").lastChild.remove();}
+  
 }
+
+document.getElementById("combatLog").addEventListener('scroll', function() {
+  var combatLog = document.getElementById("combatLog");
+  
+  // Verificar si el scroll está en la parte inferior o muy cerca de ella
+  var isAtBottom = combatLog.scrollHeight - combatLog.scrollTop <= combatLog.clientHeight + 30; // Consideramos un margen de 5 píxeles
+  
+  if (isAtBottom) {
+    combatLog.scrollTop = combatLog.scrollHeight - combatLog.clientHeight;
+  }
+});
 
 function expBar() { //updates exp bar and checks level up
   if (rpgClass[stats.currentClass].level>=rpgClass[stats.currentClass].maxLevel){ rpgClass[stats.currentClass].currentExp = 0 }
@@ -736,7 +750,7 @@ function postDamageCheck(damage){ //check after all the calculations (should had
   if (damage > 999) logs.P35.unlocked = true;
   if (damage > 99999) logs.P35A.unlocked = true;
   if (damage > 999999) logs.P35B.unlocked = true;
-
+  if (damage > 19999999) logs.P35BA.unlocked = true;
 
 
 
@@ -767,7 +781,7 @@ function enemyNatureDamage(damage, type){
   currentHP -= damageDealt;
   enemyUpdate();
   damageText(beautify(damageDealt)+critMark(critChance-1), 'damageText', '#21b42d', icon, "enemyPanel");
-  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Nature Damage");
+  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Nature Damage");
     
   postDamageCheck(damageDealt)
 
@@ -795,7 +809,7 @@ function enemyMightDamage(damage, type){
   currentHP -= damageDealt;
   enemyUpdate();
   damageText(beautify(damageDealt)+critMark(critChance-1), 'damageText', '#217eb4', icon, "enemyPanel");
-  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Might Damage");
+  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Might Damage");
 
     
   postDamageCheck(damageDealt)
@@ -825,7 +839,7 @@ function enemyElementalDamage(damage, type){
   currentHP -= damageDealt;
   enemyUpdate();
   damageText(beautify(damageDealt)+critMark(critChance-1), 'damageText', '#f35933', icon, "enemyPanel");
-  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Elemental Damage");
+  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Elemental Damage");
 
     
   postDamageCheck(damageDealt)
@@ -856,7 +870,7 @@ function enemyOccultDamage(damage, type){
   currentHP -= damageDealt;
   enemyUpdate();
   damageText(beautify(damageDealt)+critMark(critChance-1), 'damageText', '#a936d6', icon, "enemyPanel");
-  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Occult Damage");
+  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Occult Damage");
 
     
   postDamageCheck(damageDealt)
@@ -882,7 +896,7 @@ function enemyDeificDamage(damage, type){
   currentHP -= damageDealt;
   enemyUpdate();
   damageText(beautify(damageDealt)+critMark(critChance-1), 'damageText', '#ec9900', icon, "enemyPanel");
-  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Deific Damage");
+  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Deific Damage");
 
     
   postDamageCheck(damageDealt)
@@ -894,7 +908,7 @@ function enemyBasicDamage(damage){
   currentHP -= damageDealt;
   enemyUpdate();
   damageText(beautify(damageDealt), 'damageText', '#818181', icon, "enemyPanel");
-  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Damage");
+  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Damage");
   postDamageCheck(damageDealt)
 }
 
@@ -905,7 +919,7 @@ function enemyHealingDamage(healing){
   if (currentHP > enemies[stats.currentEnemy].hp) currentHP = enemies[stats.currentEnemy].hp //prevents overhealing
   enemyUpdate();
   damageText(beautify(healingDealt), 'damageText', '#61b600', 'heal', "enemyPanel");
-  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " heals for <FONT COLOR='#e8643c'>" + Math.round(healingDealt) + " HP");
+  if (!settings.disableDamageLog) logPrint( enemies[stats.currentEnemy].name + " heals for <FONT COLOR='#e8643c'>" + beautify(healingDealt) + " HP");
 }
 
 
@@ -921,7 +935,7 @@ function playerNatureDamage(damage){
   }
   playerUpdate();
   damageText(beautify(damageDealt), 'damageText', '#21b42d', icon, "playerPanel");
-  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Nature Damage");
+  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" +beautify(damageDealt) + " Nature Damage");
 }
 
 function playerMightDamage(damage){
@@ -935,7 +949,7 @@ function playerMightDamage(damage){
   }
   playerUpdate();
   damageText(beautify(damageDealt), 'damageText', '#217eb4', icon, "playerPanel");
-  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Might Damage");
+  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Might Damage");
 }
 
 function playerElementalDamage(damage){
@@ -949,7 +963,7 @@ function playerElementalDamage(damage){
   }
   playerUpdate();
   damageText(beautify(damageDealt), 'damageText', '#f35933', icon, "playerPanel");
-  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Elemental Damage");
+  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Elemental Damage");
 }
 
 function playerOccultDamage(damage){
@@ -963,7 +977,7 @@ function playerOccultDamage(damage){
   }
   playerUpdate();
   damageText(beautify(damageDealt), 'damageText', '#a936d6', icon, "playerPanel");
-  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Occult Damage");
+  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Occult Damage");
 }
 
 function playerDeificDamage(damage){
@@ -977,7 +991,7 @@ function playerDeificDamage(damage){
   }
   playerUpdate();
   damageText(beautify(damageDealt), 'damageText', '#ec9900', icon, "playerPanel");
-  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + Math.round(damageDealt) + " Deific Damage");
+  if (!settings.disableDamageLog) logPrint( stats.turtleName + " recieves <FONT COLOR='#e8643c'>" + beautify(damageDealt) + " Deific Damage");
 }
 
 function playerHealingDamage(healing){
@@ -987,7 +1001,7 @@ function playerHealingDamage(healing){
   if (rpgPlayer.hp > playerMaxHp) rpgPlayer.hp = playerMaxHp //prevents overhealing
   playerUpdate();
   damageText(beautify(healingDealt), 'damageText', '#61b600', 'heal', "playerPanel");
-  if (!settings.disableDamageLog) logPrint( stats.turtleName + " heals for <FONT COLOR='#e8643c'>" + Math.round(healingDealt) + " HP");
+  if (!settings.disableDamageLog) logPrint( stats.turtleName + " heals for <FONT COLOR='#e8643c'>" + beautify(healingDealt) + " HP");
 }
 
 //#endregion
@@ -1246,9 +1260,9 @@ if (enemies.E27.killCount>0) { materialTable2.I40.P = 15; materialTable2.I58.P =
 
         if ("R" in table[dt]){ //dynamic price adjuster
 
-          if (table[dt].R === "high") items[dt].sell = Math.max(1000, stats.totalCoins*0.1)
-          if (table[dt].R === "medium") items[dt].sell = Math.max(1000, stats.totalCoins*0.05)
-          if (table[dt].R === "low") items[dt].sell = Math.max(1000, stats.totalCoins*0.02)
+          if (table[dt].R === "high") items[dt].sell = Math.max(1000, stats.totalCoins*0.035)
+          if (table[dt].R === "medium") items[dt].sell = Math.max(1000, stats.totalCoins*0.025)
+          if (table[dt].R === "low") items[dt].sell = Math.max(1000, stats.totalCoins*0.01)
 
           
         }
@@ -1312,6 +1326,7 @@ window.addEventListener('DOMContentLoaded', () => { // inventory culling
 });
 
 stats.recipesLearnt = 0;
+let itemReuseInterval;
 
 function addItem() { //updates inventory items
   for (let i in items) {
@@ -1322,9 +1337,9 @@ function addItem() { //updates inventory items
         itemCDScreen = ""
         if ("cd" in items[i]) itemCDScreen = '<div class="itemCooldownTimer" id="'+i+'itemCooldown"></div>'
         if (items[i].max === 1)
-          itemdiv.innerHTML = itemCDScreen+'<img id="'+i+'ItemImage"  src = "img/src/items/' + items[i].img + '.jpg"><span id="'+i+'ItemLock" style="display:none" class="itemLock">🔒</span><span id="'+i+'ItemFavorite" style="display:none" class="itemFavorite">⭐</span>';
+          itemdiv.innerHTML = itemCDScreen+'<img id="'+i+'ItemImage"  src = "img/src/items/' + items[i].img + '.jpg"><span id="'+i+'ItemLock" style="display:none" class="itemLock">🔒</span><span id="'+i+'ItemFavorite" style="display:none" class="itemFavorite">⭐</span><span id="'+i+'ItemCondition" style="display:none" class="itemCondition">💎</span>';
         else //if its not singular, add counter
-          itemdiv.innerHTML = itemCDScreen+'<img id="'+i+'ItemImage" src = "img/src/items/' + items[i].img + '.jpg"> <div class="itemCount" id="' + items[i].id + "itemCount" + '">' + items[i].count + '</div><span id="'+i+'ItemLock" style="display:none" class="itemLock">🔒</span><span id="'+i+'ItemFavorite" style="display:none" class="itemFavorite">⭐</span>';
+          itemdiv.innerHTML = itemCDScreen+'<img id="'+i+'ItemImage" src = "img/src/items/' + items[i].img + '.jpg"> <div class="itemCount" id="' + items[i].id + "itemCount" + '">' + items[i].count + '</div><span id="'+i+'ItemLock" style="display:none" class="itemLock">🔒</span><span id="'+i+'ItemFavorite" style="display:none" class="itemFavorite">⭐</span><span id="'+i+'ItemCondition" style="display:none" class="itemCondition">💎</span>';
           
         itemdiv.className = "itemSlot";
 
@@ -1352,6 +1367,12 @@ function addItem() { //updates inventory items
             addItem();
           }
          });
+
+         if ("collectible" in items[i]){
+          if (items[i].statUp!=="got") {
+            did(items[i].id + "ItemCondition").style.display = "inline";
+          }
+         }
 
          if (i.startsWith("R")) itemUse(items[i].id, function () { //recipe behaviour
           let recipe = i.slice(1)
@@ -1382,6 +1403,8 @@ function addItem() { //updates inventory items
             
         });
         }
+
+        
 
         itemdiv.addEventListener('click', function(event) { 
           if (lockMode) {
@@ -1483,19 +1506,34 @@ function itemUse(id, effect) { //right click functionality of items
         itemCooldownTick();
         if (did(id+'itemCooldown')) setTimeout(() => {  if (did(id+'itemCooldown')) { did(id+'itemCooldown').style.transition = "1s all" } }, 100);
         
-          
-       
-        
-        
       }
 
-    } else if (!sellMode) {
+    } else if (!sellMode) { //if no cd
       playSound("audio/use.mp3")
       did(id + "item").style.animation = "";
       void did(id + "item").offsetWidth;
       did(id + "item").style.animation = "levelUp 0.1s 1";
       effect();
       if(items[id].count<1) resetTooltip()
+
+      if ("autoOpenLocked" in items[id] && items[id].count>9){
+      for (let i = 0; i < Math.min(items[items[id].autoOpenLocked].count-1, items[id].count-1); i++) {
+        setTimeout(function() {
+          effect()
+          playSound("audio/thud.mp3")
+          addItem()
+        }, i * 50); 
+      } } else if ("autoOpen" in items[id] && items[id].count>9){
+        for (let i = 0; i < items[id].count-1; i++) {
+          setTimeout(function() {
+            effect()
+            playSound("audio/thud.mp3")
+            addItem()
+          }, i * 50); 
+        }  
+      }
+
+
     }
 
   } else {
@@ -1817,7 +1855,7 @@ function areaButton(id) {
 
         addItem();
         playSound("audio/button3.mp3");
-        previousArea = stats.currentArea;
+        previousArea = stats.currentArea; 
         previousDifficulty = stats.currentDifficulty;
         stats.currentArea = id;
         resetAreaButtonClass();
@@ -2269,6 +2307,8 @@ var sellMode = false;
 document.addEventListener("keydown", function (event) { //enable sell mode
   if (event.key === contextKey) {
     sellMode = true;
+    favoriteMode = false;
+    lockMode = false;
     did("sellModeText").style.display = "inline";
     did("lockModeText").style.display = "none";
     did("favoriteModeText").style.display = "none";
@@ -2978,6 +3018,8 @@ for (let i in talent) {
 
     classdiv.addEventListener("click", function () { //class change
 
+      if (!dungeonTime) {
+
       playSound("audio/retro1.mp3");
 
       if (stats.currentArea === "A7"){
@@ -3026,7 +3068,10 @@ for (let i in talent) {
 
     createAreaPanel();
 
-    });
+    }
+  }
+    
+    );
   
 
 
@@ -3072,18 +3117,19 @@ function getHoveredSkill(id) { //assign skills
 }
 
 document.addEventListener('keydown', function (event) {
-  if (event.key === '1' && skillHover !== "none" && rpgPlayer.skill2 !== skillHover && rpgPlayer.skill3 !== skillHover && rpgPlayer.skill4 !== skillHover) { rpgPlayer.skill1 = skillHover }
-  if (event.key === '2' && skillHover !== "none" && rpgPlayer.skill1 !== skillHover && rpgPlayer.skill3 !== skillHover && rpgPlayer.skill4 !== skillHover) { rpgPlayer.skill2 = skillHover }
-  if (event.key === '3' && skillHover !== "none" && rpgPlayer.skill2 !== skillHover && rpgPlayer.skill1 !== skillHover && rpgPlayer.skill4 !== skillHover) { rpgPlayer.skill3 = skillHover }
-  if (event.key === '4' && skillHover !== "none" && rpgPlayer.skill2 !== skillHover && rpgPlayer.skill3 !== skillHover && rpgPlayer.skill1 !== skillHover) { rpgPlayer.skill4 = skillHover }
+  if (event.key === '2' && skillHover !== "none" && rpgPlayer.skill2 !== skillHover && rpgPlayer.skill3 !== skillHover && rpgPlayer.skill4 !== skillHover) { rpgPlayer.skill1 = skillHover }
+  if (event.key === '3' && skillHover !== "none" && rpgPlayer.skill1 !== skillHover && rpgPlayer.skill3 !== skillHover && rpgPlayer.skill4 !== skillHover) { rpgPlayer.skill2 = skillHover }
+  if (event.key === '4' && skillHover !== "none" && rpgPlayer.skill2 !== skillHover && rpgPlayer.skill1 !== skillHover && rpgPlayer.skill4 !== skillHover) { rpgPlayer.skill3 = skillHover }
+  if (event.key === '5' && skillHover !== "none" && rpgPlayer.skill2 !== skillHover && rpgPlayer.skill3 !== skillHover && rpgPlayer.skill1 !== skillHover) { rpgPlayer.skill4 = skillHover }
 
+  if (stats.currentCategory === "rpgContainer"){
   if (event.key === '1' && skillHover === "none" && rpgPlayer.skill0 !== "none") castSkill("0")
   if (event.key === '2' && skillHover === "none" && rpgPlayer.skill1 !== "none") castSkill("1")
   if (event.key === '3' && skillHover === "none" && rpgPlayer.skill2 !== "none") castSkill("2")
   if (event.key === '4' && skillHover === "none" && rpgPlayer.skill3 !== "none") castSkill("3")
   if (event.key === '5' && skillHover === "none" && rpgPlayer.skill4 !== "none") castSkill("4")
 
-
+}
 
   updateSkills()
 });
@@ -3844,11 +3890,11 @@ function tooltipEnemies() {
     did("tooltipRarity").style.color = "white";
     did("tooltipName").style.color = "white";
     did("tooltipArrow").style.display = "none";
-    did("tooltipArrowRight").style.display = "flex";
 
     let dropDesc = ""
 
-    if ("dropDesc" in enemies[stats.currentEnemy]) dropDesc = '<br><br><FONT COLOR="#edd585">Dedicated Drops:<br>'+enemies[stats.currentEnemy].dropDesc ;
+    if ("bestiaryItem" in enemies[stats.currentEnemy]) dropDesc = '<br><br>'+bestiaryTag("Dedicated Drops", "#997151")+eval(enemies[stats.currentEnemy].bestiaryItem) ;
+    if ("bestiaryItemAlt" in enemies[stats.currentEnemy]) dropDesc = '<br><br><FONT COLOR="#edd585">Dedicated Drops:<br>'+eval(enemies[stats.currentEnemy].bestiaryItemAlt) ;
     
     did("tooltipDescription").innerHTML =  enemies[stats.currentEnemy].description+dropDesc
 
@@ -3868,7 +3914,7 @@ function tooltipEnemies() {
     const newLeft = referenceRight - movingDiv.offsetWidth; // Cambiado
     const newTop = referenceTop - movingDiv.offsetHeight;
     movingDiv.style.left = newLeft + "px";
-    movingDiv.style.top = newTop + "px";
+    movingDiv.style.top = newTop + 20 + "px";
   });
 
   did("enemyAnimation").addEventListener("mouseleave", function () {
@@ -4082,7 +4128,7 @@ function tooltipSkill(id, full) {
         did("tooltipArrowRight").style.display = "flex";
         did("tooltipArrowRight").style.top = "20%";
 
-        let assigndesc = '<br><br><div style=" text-align: center; background:transparent" ><div class="separador"></div><span style="color:gray">Press <FONT COLOR="orange">[1], [2] , [3]<FONT COLOR="gray"> or <FONT COLOR="orange">[4]<FONT COLOR="gray"> to assign this skill to the hotbar</span></div>'
+        let assigndesc = '<br><br><div style=" text-align: center; background:transparent" ><div class="separador"></div><span style="color:gray">Press <FONT COLOR="orange">[2], [3] , [4]<FONT COLOR="gray"> or <FONT COLOR="orange">[5]<FONT COLOR="gray"> to assign this skill to the hotbar</span></div>'
 
         let castDescription = ""
         if ("cast" in talent[id]) castDescription = "<span style='color:gray'>Consumes "+eval(talent[id].cost)+" SP<br>"+talent[id].cd+"s Cooldown</span><br><br>"
@@ -4441,7 +4487,21 @@ setTimeout(() => {
 }, 300);
  } });
 
+
+
+
+ var presentCollectibles = { 
+  I291:{P:100,A:1, R:"medium"}, 
+  I292:{P:100,A:1, R:"medium"},
+}
+
+
+
 function startMysteryMinigame(){
+
+
+  rollTable(presentCollectibles, 1);
+
 
 cd.presentCanSpawn = playerPresentMinigameTimer;
 stats.mysteryPresentsOpened++;
@@ -4486,9 +4546,9 @@ function openPresent(present) {
     if (present.startsWith("coin")) {
       let roll = rng(1,10);
       let amount = 0
-      if (roll <= 5) { amount = stats.totalCoins * 0.03}
-      else if (roll <= 9) { amount = stats.totalCoins * 0.05} 
-      else if (roll === 10) { amount = stats.totalCoins * 0.07}
+      if (roll <= 5) { amount = stats.totalCoins * 0.02}
+      else if (roll <= 9) { amount = stats.totalCoins * 0.03} 
+      else if (roll === 10) { amount = stats.totalCoins * 0.04}
 
       div.innerHTML = '<img src="img/src/icons/coin.png">'+beautify(amount)+' Turtle Coins'
       rpgPlayer.coins += amount
@@ -4498,9 +4558,9 @@ function openPresent(present) {
     if (present.startsWith("exp")) {
       let roll = rng(1,10);
       let amount = 0
-      if (roll <= 5) { amount = rpgClass[stats.currentClass].nextExp * 0.4}
-      else if (roll <= 9) { amount = rpgClass[stats.currentClass].nextExp * 0.6} 
-      else if (roll === 10) { amount = rpgClass[stats.currentClass].nextExp * 0.8}
+      if (roll <= 5) { amount = rpgClass[stats.currentClass].nextExp * 0.3}
+      else if (roll <= 9) { amount = rpgClass[stats.currentClass].nextExp * 0.4} 
+      else if (roll === 10) { amount = rpgClass[stats.currentClass].nextExp * 0.5}
 
       div.innerHTML = '<img src="img/src/icons/xp.png">'+beautify(amount)+' EXP'
       rpgClass[stats.currentClass].currentExp += amount
@@ -4524,7 +4584,7 @@ function openPresent(present) {
       else if (roll === 4) { div.innerHTML = div.innerHTML = '<img src="img/src/items/I177.jpg">x1 EXP Voucher'; items.I177.count+=1}
       else if (roll === 5) { div.innerHTML = div.innerHTML = '<img src="img/src/items/I178.jpg">x1 Drop Voucher'; items.I178.count+=1}
       else if (roll === 6) { div.innerHTML = div.innerHTML = '<img src="img/src/items/I174.jpg">x1 Dungeon Voucher'; items.I174.count+=1}
-      else if (roll === 7) { div.innerHTML = div.innerHTML = '<img src="img/src/items/I93.jpg">x1 Golden Stamper'; items.I93.count++}
+      else if (roll === 7) { div.innerHTML = div.innerHTML = '<img src="img/src/items/I93.jpg">x1 Ornated Stamper'; items.I93.count++}
       else if (roll === 8) { div.innerHTML = div.innerHTML = '<img src="img/src/items/I219.jpg">x1 Giantite Chunk'; items.I219.count++}
       else if (roll === 9) { div.innerHTML = div.innerHTML = '<img src="img/src/items/I209.jpg">x1 Ephemeral Time Egg'; items.I209.count++}
       else if (roll === 10) { div.innerHTML = div.innerHTML = '<img src="img/src/items/I210.jpg">x1 Perennial Time Egg'; items.I210.count++}
@@ -4708,7 +4768,6 @@ function rpgInitialization() {
   }
 
 
-save();
 
 
 

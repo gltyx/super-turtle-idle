@@ -89,7 +89,7 @@ function createRecipe() {
     
     const recipediv = document.createElement('div');
     recipediv.id = r+"recipe";
-    recipediv.innerHTML = '['+recipes[r].level+'] <span id="'+r+'recipeName">????? </span> <img id="'+r+'craftIconOne" src="img/src/icons/craftOne.png"> <img id="'+r+'craftIconAll" src="img/src/icons/craftAll.png">';
+    recipediv.innerHTML = '['+recipes[r].level+'] <span id="'+r+'recipeName">????? </span> <img id="'+r+'craftIconOne" src="img/src/icons/craftOne.png"> <img id="'+r+'craftIconAll" src="img/src/icons/craftAll.png"><div id="'+r+'craftQueue"></div>';
     did(r.substring(0, 2) + "panel").appendChild(recipediv);
     recipediv.className = 'recipe';
     recipeButton(r); 
@@ -114,6 +114,7 @@ function createRecipe() {
      
      if(recipes[r].crafting==='once') {did(r+'craftIconOne').style.display = "inline"} else did(r+'craftIconOne').style.display = "none";
      if(recipes[r].crafting==='all') {did(r+'craftIconAll').style.display = "inline"} else did(r+'craftIconAll').style.display = "none";
+     if(recipes[r].crafting==='once') did (r+'craftQueue').innerHTML = recipes[r].craftingQueue
        
    }
        
@@ -205,28 +206,58 @@ function recipeButton(r) {
 did('craftButtonOne').addEventListener('click', function() { craftButton('once'); });
 did('craftButtonAll').addEventListener('click', function() { craftButton('all'); });
 
+let itemQueueValue = 1;
+
 function craftButton(count){
+
+    if (craftingQueue.value.length!==0) {itemQueueValue = craftingQueue.value} else itemQueueValue = 1;
+
+    if (isNaN(craftingQueue.value) || craftingQueue.value < 1 || craftingQueue.value > 99) {
+        itemQueueValue = 1;
+    }
+
+    if (count==="all") itemQueueValue = 1;
     
      let canCraft = true; //codigo marciano que me ha dado gpt, checks for ingredient number
-     if (items[recipes[currentRecipe].reagent1].count < recipes[currentRecipe].amount1) { canCraft = false;}
-     if (recipes[currentRecipe].reagent2 && items[recipes[currentRecipe].reagent2].count < recipes[currentRecipe].amount2) {canCraft = false;}
-     if (recipes[currentRecipe].reagent3 && items[recipes[currentRecipe].reagent3].count < recipes[currentRecipe].amount3) {canCraft = false;}
-     if (recipes[currentRecipe].reagent4 && items[recipes[currentRecipe].reagent4].count < recipes[currentRecipe].amount4) {canCraft = false;}
+     if (items[recipes[currentRecipe].reagent1].count< recipes[currentRecipe].amount1*itemQueueValue) { canCraft = false;}
+     if (recipes[currentRecipe].reagent2 && items[recipes[currentRecipe].reagent2].count < recipes[currentRecipe].amount2*itemQueueValue) {canCraft = false;}
+     if (recipes[currentRecipe].reagent3 && items[recipes[currentRecipe].reagent3].count < recipes[currentRecipe].amount3*itemQueueValue) {canCraft = false;}
+     if (recipes[currentRecipe].reagent4 && items[recipes[currentRecipe].reagent4].count < recipes[currentRecipe].amount4*itemQueueValue) {canCraft = false;}
     
-     if (canCraft && recipes[currentRecipe].crafting === "false") {
-        playSound("audio/craft.mp3")
+     if (canCraft && (recipes[currentRecipe].crafting === "false" || (recipes[currentRecipe].craftingQueue>=0 && count !== "all")) && recipes[currentRecipe].crafting !== "all") {
+         playSound("audio/craft.mp3")
          did('craftBarWrap').style.animation = '';
          void did('craftBarWrap').offsetWidth;
          did('craftBarWrap').style.animation = 'levelUp 1s 1';
          recipes[currentRecipe].crafting = count;
+         if (count === "once"){
+            
+            recipes[currentRecipe].craftingQueue += parseInt(itemQueueValue)
+            
+            did (currentRecipe+'craftQueue').innerHTML = recipes[currentRecipe].craftingQueue
+
+         }
+
          recipes[currentRecipe].time = recipes[currentRecipe].timer;
          createRecipe();
-
-         items[recipes[currentRecipe].reagent1].count -= recipes[currentRecipe].amount1; //deducts on the initial press
-         if ('reagent2' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent2].count -= recipes[currentRecipe].amount2;
-         if ('reagent3' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent3].count -= recipes[currentRecipe].amount3;
-         if ('reagent4' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent4].count -= recipes[currentRecipe].amount4;
+         if (count === "once"){
+         items[recipes[currentRecipe].reagent1].count -= recipes[currentRecipe].amount1*itemQueueValue; //deducts on the initial press
+         if ('reagent2' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent2].count -= recipes[currentRecipe].amount2*itemQueueValue;
+         if ('reagent3' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent3].count -= recipes[currentRecipe].amount3*itemQueueValue;
+         if ('reagent4' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent4].count -= recipes[currentRecipe].amount4*itemQueueValue;
          addItem()
+        }
+
+        if (count === "all"){
+            items[recipes[currentRecipe].reagent1].count -= recipes[currentRecipe].amount1; //deducts on the initial press
+            if ('reagent2' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent2].count -= recipes[currentRecipe].amount2;
+            if ('reagent3' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent3].count -= recipes[currentRecipe].amount3;
+            if ('reagent4' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent4].count -= recipes[currentRecipe].amount4;
+            addItem()
+        }
+
+
+
 
      }
 
@@ -242,15 +273,19 @@ function craftButton(count){
          did('craftBarWrap').style.animation = '';
          void did('craftBarWrap').offsetWidth;
          did('craftBarWrap').style.animation = 'levelUp 1s 1';
+
+         did (currentRecipe+'craftQueue').innerHTML = "";
          
          recipes[currentRecipe].time = recipes[currentRecipe].timer;
          createRecipe();
          craftingBarUi()
-         items[recipes[currentRecipe].reagent1].count += recipes[currentRecipe].amount1; //returns materials
-         if ('reagent2' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent2].count += recipes[currentRecipe].amount2;
-         if ('reagent3' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent3].count += recipes[currentRecipe].amount3;
-         if ('reagent4' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent4].count += recipes[currentRecipe].amount4;
+         items[recipes[currentRecipe].reagent1].count += recipes[currentRecipe].amount1*Math.max(recipes[currentRecipe].craftingQueue, 1); //returns materials
+         if ('reagent2' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent2].count += recipes[currentRecipe].amount2*Math.max(recipes[currentRecipe].craftingQueue, 1); //aqui menos uno quizas
+         if ('reagent3' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent3].count += recipes[currentRecipe].amount3*Math.max(recipes[currentRecipe].craftingQueue, 1);
+         if ('reagent4' in recipes[currentRecipe]) items[recipes[currentRecipe].reagent4].count += recipes[currentRecipe].amount4*Math.max(recipes[currentRecipe].craftingQueue, 1);
          addItem()
+
+         recipes[currentRecipe].craftingQueue = 0;
 
     }
 
@@ -328,10 +363,24 @@ function craftingProgress(){
     addItem()
     
 
-    if (recipes[r].crafting === 'once'){
+    if (recipes[r].crafting === 'once' && recipes[r].craftingQueue === 1){
+
+
     recipes[r].crafting = 'false';
     recipes[r].time = recipes[r].timer;
     createRecipe();
+    did (r+'craftQueue').innerHTML = "";
+    recipes[r].craftingQueue = 0;
+
+    
+
+    } else if (recipes[r].crafting === 'once' && recipes[r].craftingQueue > 1) {
+
+        recipes[r].craftingQueue--
+        did (r+'craftQueue').innerHTML = recipes[r].craftingQueue;
+        recipes[r].time = recipes[r].timer;
+        createRecipe();
+
     }
 
     if (recipes[r].crafting === 'all'){

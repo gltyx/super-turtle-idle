@@ -14,7 +14,7 @@ window.addEventListener("contextmenu", function (e) { //disables web right click
 
 
 document.addEventListener('keydown', function (event) { //disables spacebar
-    if (event.key === ' ' && did("skillMenu").style.display === "flex") {
+    if (event.key === ' ' && (did("skillMenu").style.display === "flex" || did("turtleRename").style.display === "flex")) {
       event.preventDefault();
     } });
 
@@ -273,6 +273,12 @@ function refreshItemOfTheDay(){
 
 stats.jesterTurtleClicks = 0;
 
+var jesterCollectibles = { 
+    I294:{P:100,A:1, R:"medium"}, 
+    I295:{P:100,A:1, R:"medium"},
+  }
+
+
 function spawnJesterTurtle(){
 
     const div = document.createElement("div");
@@ -286,6 +292,7 @@ function spawnJesterTurtle(){
     div.addEventListener("click", function clickHandler() {
         playSound("audio/button9.mp3"); 
         stats.jesterTurtleClicks++;
+        rollTable(jesterCollectibles, 1);
         cd.jesterCooldown = 1200;
         setTimeout(() => {did("jesterImage").style.opacity = 0;}, 100);
         setTimeout(() => {div.remove()}, 1000);
@@ -632,6 +639,8 @@ function closePanels(){
     did("mailLetter").style.display = "none";
     did("catalogue").style.display = "none";
     did("armory").style.display = "none";
+    did("bestiary").style.display = "none";
+    did("support").style.display = "none";
     did("skillMenu").style.display = "none";
     did("mailMenu").style.display = "none";
     did("turtleRename").style.display = "none";
@@ -650,6 +659,56 @@ function deleteSavePrompt(){
 }
 
 //-----statistics-------
+
+settingsPanel ("botonSupport", "support");
+
+setInterval(() => { if (did("support").style.display != "none") { patreonShine() } }, 2000);
+
+function patreonShine(){
+    for (let i = 0; i < patreonTier2.length; i++) {
+    if (rng(1,3)===1) animParticleBurst(rng(1,3) , "particleSpark", patreonTier2[i] + "patreonTier2", 0);
+}
+
+for (let i = 0; i < patreonTier1.length; i++) {
+    if (rng(1,3)===1) animParticleBurst(rng(1,3) , "particleSpark", patreonTier1[i] + "patreonTier1", 0);
+}
+
+}
+
+
+for (let i = 0; i < patreonTier1.length; i++) {
+    if (!did(patreonTier1[i] + "patreonTier1")) {
+        const div = document.createElement("span");
+        div.id = patreonTier1[i] + "patreonTier1";
+        div.innerHTML = patreonTier1[i];
+        did('patreonList1').appendChild(div);
+    }
+}
+
+for (let i = 0; i < patreonTier2.length; i++) {
+    if (!did(patreonTier2[i] + "patreonTier2")) {
+        const div = document.createElement("span");
+        div.id = patreonTier2[i] + "patreonTier2";
+        div.innerHTML = patreonTier2[i];
+        did('patreonList2').appendChild(div);
+    }
+}
+
+for (let i = 0; i < patreonTier3.length; i++) {
+    if (!did(patreonTier3[i] + "patreonTier3")) {
+        const div = document.createElement("span");
+        div.id = patreonTier3[i] + "patreonTier3";
+        div.innerHTML = patreonTier3[i];
+        did('patreonList3').appendChild(div);
+    }
+}
+
+
+
+
+
+
+
 
 settingsPanel ("botonEstadisticas", "estadisticas");
 
@@ -684,9 +743,19 @@ settingsPanel ("turtleName", "turtleRename");
 var logTrackName = 'base';
 
 function enterName(event) {
-    if (event.key === "Enter" && did("namingBox").value.length >= 1) {stats.turtleName = did("namingBox").value; logTrackName = did("namingBox").value; displayTurtleName(); closePanels()}
+    if (event.key === "Enter" && did("namingBox").value.length >= 1) {stats.turtleName = did("namingBox").value; logTrackName = did("namingBox").value; displayTurtleName(); closePanels(); if (rng(1,30)===1) {items.I293.count++; addItem();}}
 }
-function displayTurtleName(){ did("turtleName").textContent = stats.turtleName; did('turtleName2').textContent = stats.turtleName;}
+function displayTurtleName(){
+
+
+
+    did("turtleName").textContent = stats.turtleName; did('turtleName2').textContent = stats.turtleName;
+    if (patreonTier1.includes(stats.turtleName) || patreonTier1Alt.includes(stats.turtleName)) did("turtleName").style.color = "#C672FA";
+    else if (patreonTier2.includes(stats.turtleName) || patreonTier2Alt.includes(stats.turtleName)) did("turtleName").style.color = "#FF6B43";
+    else if (patreonTier3.includes(stats.turtleName) || patreonTier3Alt.includes(stats.turtleName)) did("turtleName").style.color = "#92DB76";
+    else did("turtleName").style.color = "white"
+
+}
 
 //----bought upgrades---
 
@@ -847,7 +916,7 @@ tooltipPenguin()
 
 
 function offlineRewards(amount, concept){
-if (enemies[stats.currentEnemy].tag!=="areaBoss" && !dungeonTime && stats.currentEnemy!=="E20") {
+if (enemies[stats.currentEnemy].tag!=="areaBoss" && !dungeonTime) {
     let currentDrop = "";
 
     if (enemies[stats.currentEnemy].drop && enemies[stats.currentEnemy].drop.includes('dropItem')) {
@@ -859,7 +928,7 @@ if (enemies[stats.currentEnemy].tag!=="areaBoss" && !dungeonTime && stats.curren
     }
 
 
-    if (concept==='egg'){
+    if (concept==='egg' && enemies[stats.currentEnemy].difficulty !== "pond"){
 
         createPopup('&#9201; Time Skipped and gathered '+beautify(Math.round(amount))+'<img src="img/src/items/'+currentDrop+'.jpg">and '+beautify(enemies[stats.currentEnemy].exp/6 * Math.round(amount))+' EXP', '#4e9690')
 
@@ -871,13 +940,24 @@ if (stats.currentArea === "A3") rollTable(area3Loot, amount/7)
 if (stats.currentArea === "A4") rollTable(area4Loot, amount/7)
 
 
+if (stats.currentEnemy === "E20") rollTable(fishingEeriePond1, amount/7);
 
+
+if  (enemies[stats.currentEnemy].difficulty !== "pond"){
 items[currentDrop].count += Math.round(amount);
 rpgClass[stats.currentClass].currentExp += enemies[stats.currentEnemy].exp/6 * Math.round(amount);
 
+
 did("idleItem").innerHTML = beautify(Math.round(amount));
 did("idleItemImg").src = "img/src/items/"+currentDrop+".jpg";
+
+} else {
+    did("idleItem").innerHTML = "some fishes";
+    did("idleItemImg").src = "img/src/items/I171.jpg";
+}
+
 did("idleExp").innerHTML = beautify(enemies[stats.currentEnemy].exp * Math.round(amount));
+
 
 expBar();
 addItem();
@@ -911,7 +991,7 @@ setInterval(function() { if (!settings.disableAutosave) { autosave(); } }, 60000
 
 document.addEventListener("keydown", function (event) {
     var turtleRename = did("turtleRename");
-    if (event.key === "s" && turtleRename.style.display === "none") autosave()  
+    if (event.key === "s" && turtleRename.style.display === "none") autosave()
 });
 
 //----save and load----
@@ -1013,6 +1093,10 @@ localStorage.setItem('lastVisitTime', new Date().getTime());
 
   saveData.savedItemFavorited = {}; for (const i in items) { saveData.savedItemFavorited[i] = items[i].favorited;}
 
+  saveData.savedItemQueue = {}; for (const i in recipes) { saveData.savedItemQueue[i] = recipes[i].craftingQueue;}
+
+  saveData.savedEnemiesSaw = {}; for (const i in enemies) { saveData.savedEnemiesSaw[i] = enemies[i].sawOnce;}
+
 
     
   const JSONData = JSON.stringify(saveData);
@@ -1023,6 +1107,10 @@ function load() {
   const datosGuardados = localStorage.getItem('saveData');
   if (datosGuardados) { //checks if savedata available
     const parsedData = JSON.parse(datosGuardados);
+
+    for (const i in parsedData.savedEnemiesSaw) { enemies[i].sawOnce = parsedData.savedEnemiesSaw[i];}
+
+    for (const i in parsedData.savedItemQueue) { recipes[i].craftingQueue = parsedData.savedItemQueue[i];}
 
     for (const i in parsedData.savedItemFavorited) { items[i].favorited = parsedData.savedItemFavorited[i];}
 
@@ -1194,6 +1282,7 @@ function unlocksReveal(){
     if (unlocks.garrison) did('campTab').style.display = "flex";
     if (unlocks.itemOfTheDay) did('itemOfTheDay').style.display = "flex";
     if (unlocks.journal) did('achievementsTab').style.display = "flex";
+    if (unlocks.bestiary) did('bestiaryWidget').style.display = "flex";
     if (unlocks.penguins) {did('disablePenguinRecapButton').style.display = "inline"; did('penguinIndicatorButton').style.display = "flex"; did('penguinIndicator').style.display = "flex"; }
     if (unlocks.inventorySorting) {
         did('inventorySorters2').style.display = "flex";
@@ -1239,7 +1328,7 @@ function retroactiveUpdate(){
     if (quests.A3Q6.state === "completed") shopItems.A3S16.unlocked = true;
 
 
-    if (stats.currentArea === 0) {
+    if (stats.currentArea === 0 && stats.currentArea === 1) { //si esto da mas problemas cambiar a si no empieza por A
         stats.currentArea="A1";
         switchArea();
         specialButtonUi();

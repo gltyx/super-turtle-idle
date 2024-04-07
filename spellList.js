@@ -392,14 +392,37 @@ function castTerrorscythe(){ //weapon skill
         playerBuffs();
     }, 700);}
 
+let wraithbladeCooldown = 0;
 function castWraithbladeScimitar(){ //weapon skill
-    animImageSplash("ghost", "enemyPanel", "float", 0);
-    animImageSplash("slash", "enemyPanel", "impact", 0);
-    animState(stats.currentEnemy+"enemy", "shake 0.4s 1");
-    animParticleBurst(5 , "particleFire", "enemyPanel", 130);
-    buffs.B33.time=15;
-    if (buffs.B33.stacks<10) buffs.B33.stacks++;
+
+    wraithbladeCooldown--
+    if (wraithbladeCooldown<=0) {
+        buffs.B33.time=10;
+        animState(stats.currentEnemy+"enemy", "shake 0.4s 1");
+        animParticleBurst(2 , "particleFire", "enemyPanel", 130);
+        if (buffs.B33.stacks<10) buffs.B33.stacks++;
+    }
+    if (buffs.B33.stacks>=10) {
+        castWraithbladeScimitar2();
+        buffs.B33.time=0;
+        wraithbladeCooldown = 7;
+        enemyOccultDamage(playerTotalOccultDamage*3, "noScale");
+    }
+
     playerBuffs(); 
+
+
+    function castWraithbladeScimitar2(){
+
+        animImageSplash("ghost", "enemyPanel", "float", 0);
+        animState(stats.currentEnemy+"enemy", "shake 0.4s 1");
+        animParticleBurst(8 , "particleFire", "enemyPanel", 130);
+        animImageSplash("soundWave", "enemyPanel", "wave", 200);
+
+
+
+
+    }
 }
 
 function castPlundergeist1(){ //weapon skill
@@ -553,7 +576,7 @@ let thiefCollectibles = {
 }
 
 stats.timesStolen = 0;
-
+let enemyLevel = 1;
 function castThief(){
     animState(stats.currentEnemy+"enemy", "gelatine 0.4s 1");
     animParticleProjectile("thief", "reverseThrow", 0, "particleSmoke", 0);
@@ -566,8 +589,8 @@ function castThief(){
 
         if (enemies[stats.currentEnemy].level !== ''){
         const cadena = enemies[stats.currentEnemy].level;
-        const enemyLevel = parseInt(cadena.match(/\d+/)[0]);
-        
+        enemyLevel = parseInt(cadena.match(/\d+/)[0]);
+        }
         
         if (enemyLevel<41){ //low level money
             if (rng(1,15)===1){
@@ -594,9 +617,7 @@ function castThief(){
         addItem();
         logPrint(`<FONT COLOR="#68FEBE"> You managed to steal a `+stolenItem+`!`)
 
-        } else{
-            logPrint(`<FONT COLOR="#68FEBE"> Failed to steal anything`)
-        }
+         
 
     }else logPrint(`<FONT COLOR="#68FEBE"> Failed to steal anything`)
 
