@@ -814,7 +814,7 @@ function tooltipUpgrades() {
     if (did(upgrades[u].id+"upgrade")) {
     did(upgrades[u].id+"upgrade").addEventListener('mouseenter', function () { //on mouseenter
     did('tooltip').style.display = "flex";
-    const coin = '<img src="img/sys/Coin.png">';
+    const coin = '<img src="img/sys/coin.png">';
     did("tooltipName").textContent = upgrades[u].name;
     did("tooltipPrice").innerHTML = beautify(upgrades[u].price) + coin;
     did("tooltipRarity").textContent = upgrades[u].rarity;
