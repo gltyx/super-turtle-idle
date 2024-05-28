@@ -932,7 +932,7 @@ var cnItems = {
     
     "[You can only carry 5 of each healing items at a time]": "【每种治疗道具的携带上限都是5】",
     
-    //职业
+    //职业（天赋树先鸽了）
     "<No Class>": "<无职业>",
     "No Class": "无职业",
     "Class": "职业",
