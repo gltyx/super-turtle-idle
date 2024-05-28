@@ -935,6 +935,7 @@ var cnItems = {
     
     //职业
     "<No Class>": "<无职业>",
+    "No Class": "无职业",
     "Class": "职业",
     "Nothing to fight with, except life-affirming flesh.": "除了生命顽强之外，别无长处。",
     "[Innate Skill: None]": "【天生技能：无】",
@@ -948,7 +949,7 @@ var cnItems = {
     "dealing 50K% of your Strength as Elemental Damage and 15K% of your Strength as Elemental Damage over 15 seconds": "造成力量值 500倍 的元素伤害并且在15秒内持续灼烧，造成每秒力量值 150倍 的元素伤害",
     "Gambler": "妙手千王",
     "Have you ever considered using your crippling addiction as a weapon? Myriad of cards and dice shall trump over your foes.": "你有考虑过把你的瘾头转移到战斗上来吗？漫天的纸牌和骰子将是致胜王牌。",
-    "[Innate Skill: Card Fan]": "卡牌风扇",
+    "[Innate Skill: Card Fan]": "【天生技能：卡牌旋风】",
     "Consumes 1 SP": "消耗 1 点法力",
     "1s Cooldown": "1秒 冷却时间",
     "Throws 3 sharp cards,": "掷出三张锋利的卡牌",
