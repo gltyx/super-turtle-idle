@@ -264,6 +264,9 @@ var cnItems = {
     "Patreon Supporters": "Patreon支持者",
     "penguin": "penguin",
     "Penguin Assistants": "企鹅助手",
+    "Penguin Helpers": "企鹅助手",
+    "Hard-Working Birbs": "辛勤工鸟",
+    "Penguin Helpers will gather resources and experience for you while youre offline. Your Penguin Power determines how fast you gather them. To be eligible, however, you will need to defeat the current enemy at least 100 times.": "企鹅助手会在你离线的时候为你收集资源和经验。企鹅能量决定了收集效率。然而，要获得离线收益，你需要击败当前敌人至少100次。",
     "Performance": "表现",
     "Planetarium": "天文馆",
     "Quests Completed:": "已完成委托：",
@@ -347,7 +350,6 @@ var cnItems = {
     "We sincerely hope you continue with our program and have a wonderful journey! Here is your welcome badge:": "我们非常希望您继续参与我们的计划，并预祝您有一段美好的旅程!随信附上欢迎徽章:",
     "Collected!": "已收集！",
     "Mystery Present": "神秘礼物",
-    "Game End": "游戏结束",
     "Mystery Present recieves": "神秘礼物拆封数",
     "Toggle Mystery Present spawn": "切换神秘礼物生成状态",
     "Presents CAN Currently Spawn": "神秘礼物正在生成",
@@ -355,7 +357,6 @@ var cnItems = {
     "(Click to toggle)": "(点击切换)",
     "Collected": "已收集",
     "permanently": "永久性的",
-    "CLICK BOOST!": "点击提升!",
     "Inactive": "未激活",
     "\"A vital reagent in alchemy and the cauldrons of every self-respecting witch.\"": "“炼金术和体面女巫的坩埚中必不可少的一味药。”",
     "\"One export save a day keeps the data corruption away.\"": "“每天导一档，丢档远离我。”",
@@ -413,7 +414,7 @@ var cnItems = {
     "Anyhow, these are some cookies I baked for you. Love you, Tortumom.": "总之，我为你烤了一些饼干。爱你的，龟妈妈。",
     "Hi, my dear hatchling, hows over there, dear?": "嗨，我亲爱的小宝贝，那边怎么样，还习惯吗?",
     "I'm hoping you can still recall your dear mother. Ive heard youve made the decision to pursue adventure. While I'm cheering you on from afar, just like any mother would, I'm still worried about my cub.": "我希望你还能想起你最亲爱的母亲。听说你决定去冒险了。在远方为你加油的同时，就像天下所有母亲一样，我很担心你，小崽。",
-    "We will pray for your safety, every single one of us. I'm sure that you are assisting others and that you are not ignoring their requests. You better not.": "我们所有人祈祷你平安无事。我确信你是在帮助别人，并且没有忽视他们的委托。你最好多留意一下。",
+    "We will pray for your safety, every single one of us. I'm sure that you are assisting others and that you are not ignoring their requests. You better not.": "我们所有人祈祷你平安无事。我确信你是在帮助其他动物，并没有忽视它们的委托。你最好多留意一下。",
     "\"Their flavor is quite familiar. Nothing happens if you press them, though.\"": "“熟悉的风味。别点了，我没设置点击效果。”",
     "Chocolate Chip Cookies": "巧克力脆曲奇",
     "Feed it to the turtle": "把它喂给龟龟",
@@ -460,7 +461,7 @@ var cnItems = {
     "Can be used to reset Talent Points": "可以用来重置天赋点",
     "Crafters Guild Request": "工匠公会委托",
     "Drop Voucher": "掉落凭证",
-    "Exp Voucher": "经验凭证",
+    "EXP Voucher": "经验凭证",
     "Friendly Cat Token": "友善的猫令牌",
     "Fully upgrade this item to complete the entry and unlock its potential": "将此物品升至最高阶以完成条目并释放其潜力",
     "Help! Missing Feline": "帮帮忙!猫丢了",
@@ -920,7 +921,7 @@ var cnItems = {
     "Grand Archive Key": "大档案馆钥匙",
     "Permanently unlocks the Grand Archive, gaining insight as you collect books on it": "永久解锁大档案馆，当你收集到书籍时获得洞察",
     "\"The key to a massive library recording specifics about the past, present, and future.\"": "“用于开启一个记录过去、现在和未来详情的庞大图书馆的钥匙。”",
-    "Royal Penguin Decree": "王室企鹅法令",
+    "Royal Penguin Decree": "企鹅王室法令",
     "Permanently unlocks the aid of the penguins": "永久解锁来自企鹅的援助",
     "\"Sealed with regal authority, this decree proclaims an unbreakable bond between bearer and penguin royalty.\"": "“这条由帝王权威盖章的法令宣告了持有者与企鹅王室之间牢不可破的纽带。”",
     "Whiskers Gratitude": "胡须的感激之情",
@@ -1509,12 +1510,36 @@ var cnItems = {
     
     
     //信件
-    "The stars are calling...": "群星在召唤...",
+    "Adventure guild notice.": "冒险公会通知", //半自动拍拍
+    "The Adventure Guild is pleased with your accomplishments and has chosen to give you this gift, which will undoubtedly help you on your adventures.": "冒险公会对您取得的成就感到很满意，特地送上这份礼物，它对您的冒险无疑是有帮助的。",
+    "We will be very vigilant about your future accomplishments.": "我们将热切关注您未来的举动。",
+    "Your journey awaits!": "冒险之旅仍在等待", //官方声明
+    "This is a Super Turtle Adventure Program official statement.": "这是一份超级海龟冒险计划的官方声明。",
+    "We are glad to learn that you have been fulfilling requests from individuals in need.": "很高兴得知您一路上都在帮助有需要的动物。",
+    "We have determined that you\'re prepared to set out on an exciting adventure by yourself and make your own decisions moving forward": "我们确定，您已经准备好开始一场激动人心的冒险，并做出自己的决断。",
+    "We acknowledge that you will face numerous obstacles, but we believe you can overcome every obstacle if you remain true to your principles.": "您将面临艰难险阻，但我们始终相信，如果坚守本心，您可以克服路上的每一个障碍。",
+    "Adventure guild request.": "冒险公会委托", //委托
+    "This is a Super Turtle Adventure Program official request. Reports have surfaced of an undiscovered island in the middle of the ocean.": "这是一个超级海龟冒险计划的官方委托。有报道称，在大洋中央发现了一座岛屿。",
+    "We are convinced you are prepared to venture into perilous dungeons after noticing your accomplishments, and we would like to summon you personally to said destination.": "我们相信，您已有足够实力进入危险的地牢，并希望亲自召唤您到指定目的地。",
+    "You won\'t be able to access other menus while exploring dungeons, so be cautious of their increased difficulty.": "在探索地牢时，您将无法访问其他菜单，所以要小心这部分增加的难度。",
+    "We hope that your journey is successful.": "祝您一帆风顺。",
+    "Tortumom writting here.": "给龟龟的信", //妈妈来信2
+    "Have you recently covered up to protect yourself from the cold?": "最近很冷，有把自己裹得严严实实的吗？",
+    "Now that Christmas is over, the family and myself thoroughly enjoyed some gambas.": "圣诞节很欢乐，家里人享用了丰盛的大虾宴。",
+    "Despite choking on one, the Tortuyaya recovered.": "你爷爷被大虾呛了好一会儿，好在他缓过来了。",
+    "I kept some of the leftover cookies from dinner for you.": "我拿了一些晚餐的美味曲奇寄给你。",
+    "Love you, Tortumom.": "爱你的，龟妈妈。",
+    "Honk honk honk.": "Honk honk honk（企鹅王室法令）", //瞎翻的
+    "honk honk honk honk honk": "honk honk honk honk honk（尊敬的龟龟先生）",
+    "honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk": "honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk honk（此法令的颁布旨在与您缔结友好互助条约）",
+    "honk honk honk honk honk honk honk honk honk": "honk honk honk honk honk honk honk honk honk（内容是一名企鹅将协助您的冒险）",
+    "honk.": "honk.（此致。）",
+    "The stars are calling...": "群星在召唤...", //转职
     "Salutations, shining star, Robertus Shellington is my name. As I pondered my magic orb, I observed your voyage, and I was more than thrilled to see the extent of your willingness to assist others.": "向你致敬，冉冉升起的新星，鄙人名叫罗伯特斯·谢林顿。在对着魔法水晶球深思时，我无意间注意到了你的旅行，在看到你助人的热忱后，我感到激动万分。",
     "Without a doubt, you are unique. I noticed the desire and spark in your eyes, which far surpasses that of a typical turtle.": "毫无疑问，你是与众不同的。我可以察觉到你眼底的渴求和光芒，这是一般乌龟所没有的。",
     "I chose to write you this letter to let you know that you can now learn skills if you click the level panel. Don't ask me what any of those words mean, for I am merely informing you what my orb told me.": "我最终决定提笔写下这封信件，好让你知道点击等级面板就能学技能了。不必问我那些话是什么意思，我只是复述水晶球的预示罢了。",
-    
-    "[You can only carry 5 of each healing items at a time]": "【每种治疗道具的携带上限都是5】",
+    "Adventure rank up.": "冒险家段位提升", //木→铁
+    "The Adventure Guild is indebted with you for all the people you helped through your journey, and has decided to promote your status as an adventurer.": "冒险公会非常感谢您在旅程中对有困难的动物伸出圆手，并一致决定提升您的冒险家段位。",
     
     //职业
     "No Class": "无职",
@@ -1736,7 +1761,8 @@ var cnItems = {
     "You managed to steal a Lost Wallet!": "你成功偷到了遗失钱包！",
     "You managed to steal a Pearl Necklace!": "你成功偷到了珍珠项链！",
     "You managed to steal a Jade Cat Figurine!": "你成功偷到了玉石猫像！",
-    "You managed to steal a Pilk!": "你成功偷到了牛奶！",
+    "You managed to steal a Pilk!": "你成功偷到了呕奶！",
+    "You managed to steal a Golden Trashbag!": "你成功偷到了黄金垃圾袋！",
     "Failed to steal anything": "没能偷到任何东西",
     "Lost Wallet": "遗失钱包",
     "\"Selling it before the owner suffers any longer would be the ethical thing to do in this situation.\"": "“在失主承受更多痛苦之前卖掉它是合乎道德的。”",
@@ -1744,7 +1770,7 @@ var cnItems = {
     "\"Perfect for everyday wear or special occasions or making money quickly.\"": "“适合日常穿戴或特殊场合，抑或挣点快钱。”",
     "Jade Cat Figurine": "玉石猫像",
     "\"A small statue of an animal that seems loved by everyone. Not as much as tortugas, though.\"": "“深受大家喜爱的小动物雕像，感觉不如龟龟。”",
-    "Pilk": "牛奶",
+    "Pilk": "呕奶",
     "\"Just a carton of Pilk.\"": "“只是一盒味道奇怪的牛奶。”",
     
     //纸牌
@@ -1778,6 +1804,7 @@ var cnItems = {
     "Creates a Lesser Alchemical Dust": "制作一份小份炼金粉末",
     "Creates a Lesser Elemental Flask": "制作一个小元素瓶",
     "Creates a Lesser Healing Flask": "制作一个小治疗瓶",
+    "[You can only carry 5 of each healing items at a time]": "【每种治疗道具的携带上限都是5】",
     "Creates a Lesser Might Flask": "制作一个小威能瓶",
     "Creates a Lesser Nature Flask": "制作一个小自然瓶",
     "Creates a Lesser Poison Flask": "制作一个小毒药瓶",
@@ -2238,6 +2265,8 @@ var cnPrefix = {
     "Use: ": "使用: ",
     "On Attack: ": "攻击: ",
     "Equip: ": "装备: ",
+    "Penguin Power: ": "企鹅能量：",
+    "Currently Gathering: ": "当前收集：",
     "Wooden Stamper": "木制图章",
     "Pine Boomerang": "松木回旋镖",
     "Net-O-Launcher 3000": "捕网器 3000",
@@ -2349,7 +2378,9 @@ var cnPostfix = {
     " Roll": "骰",
     " minute Cooldown)": " 分钟冷却)",
     " Fishing Level": " 钓鱼等级",
-    " Item Drop Chance": " 掉落倍率",
+    " kills per minute)": " 破敌/分）",
+    " Game End": " 游戏结束",
+    " Item Drop Chance": " 掉落倍率"
     
 }
 
@@ -2466,9 +2497,12 @@ var cnRegReplace = new Map([
     [/^Occult Damage increased by (.+)$/, '秘法伤害提高 $1'],
     [/^Increased all damage by (.+)!$/, '提高全局伤害 $1'],
     [/^Increased Drop chance by (.+)$/, '提高掉落倍率 $1'],
+    [/^❖ Increased Drop chance by (.+)$/, '❖ 提高掉落倍率 $1'],
     [/^Increased EXP gain by (.+)$/, '提高经验倍率 $1'],
+    [/^❖ Increased EXP gain by (.+)$/, '❖ 提高经验倍率 $1'],
     [/^ by (.+)$/, '提高 $1'],
     [/^ Increased (.+)$/, '提高 $1'],
+    [/^❖ Increased (.+)$/, '❖ 提高 $1'],
     [/^ increased by (.+)$/, '提高 $1'],
     [/^ Occult Damage by (.+)$/, ' $1 秘法伤害'],
     [/^World Record (.+)$/, '世界速通纪录 $1'],
