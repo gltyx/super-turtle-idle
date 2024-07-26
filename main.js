@@ -966,8 +966,8 @@ window.addEventListener('load', function () { //gets date started
 
 
 cd.presentCooldown = 0;
-cd.presentCanSpawn = 0;
-cd.gildedCooldown = 0;
+cd.presentCanSpawn = 5000;
+cd.gildedCooldown = 10000;
 
 function timeCounters() {
 
@@ -1155,7 +1155,7 @@ function calculateInactiveTime() { //calculates idle time
             did('idleTime').innerHTML = convertSecondsToHMS(secondsInactive);
             if (farmable && unlocks.penguins) offlineRewards((secondsInactive/60)*(playerPenguinPower/15));
             if (!settings.disablePenguinRecap && unlocks.penguins && farmable) { did("penguinRecap").style.display = "flex"; }
-            if (unlocks.garden){ for (let i = 0; i < Math.min(secondsInactive/10, 3000); i++) { plantTick();} }
+            if (unlocks.garden){ for (let i = 0; i < Math.min(secondsInactive/10, 3000); i++) { plantTick("offline");} }
 
             
             
@@ -1461,6 +1461,7 @@ localStorage.setItem('lastVisitTime', new Date().getTime());
   saveData.savedPlotAge = {}; for (const i in plot) { saveData.savedPlotAge[i] = plot[i].age;}
   saveData.savedPlotWater = {}; for (const i in plot) { saveData.savedPlotWater[i] = plot[i].water;}
   saveData.savedPlotMature = {}; for (const i in plot) { saveData.savedPlotMature[i] = plot[i].mature;}
+  saveData.savedPlotRenewable = {}; for (const i in plot) { saveData.savedPlotRenewable[i] = plot[i].renewable;}
 
   saveData.savedSound = {}; saveData.savedSound = savedSound;
 
@@ -1522,12 +1523,13 @@ function load() {
     for (const i in parsedData.savedPlotAge) { plot[i].age = parsedData.savedPlotAge[i];}
     for (const i in parsedData.savedPlotWater) { plot[i].water = parsedData.savedPlotWater[i];}
     for (const i in parsedData.savedPlotMature) { plot[i].mature = parsedData.savedPlotMature[i];}
+    for (const i in parsedData.savedPlotRenewable) { plot[i].renewable = parsedData.savedPlotRenewable[i];}
 
     for (const i in parsedData.savedGardenShopStock) { gardenShop[i].stock = parsedData.savedGardenShopStock[i];}
 
     for (const i in parsedData.savedSeedHarvested) { plants[i].harvested = parsedData.savedSeedHarvested[i];}
 
-    for (const i in parsedData.savedItemVaulted) { items[i].vaulted = parsedData.savedItemVaulted[i];}
+    for (const i in parsedData.savedItemVaulted) { if (items[i]) items[i].vaulted = parsedData.savedItemVaulted[i];}
 
     for (const i in parsedData.savedSeedCount) { plants[i].count = parsedData.savedSeedCount[i];}
 
@@ -1789,7 +1791,7 @@ function unlocksReveal(){
     if (stats.questsCompleted>=12) sendMail("MR2");
     if (stats.questsCompleted>=19) sendMail("MR3");
     if (stats.questsCompleted>=26) sendMail("MR4");
-    if (stats.questsCompleted>=330) sendMail("MR5"); //33
+    if (stats.questsCompleted>=35) sendMail("MR5"); //garden
 
     //flavor
     if (stats.questsCompleted>=4) sendMail("MF1"); //mom
@@ -1806,18 +1808,40 @@ function unlocksReveal(){
 }
 
 
-stats.currentVersion = 0;
+stats.currentVersion = undefined;
 
 function retroactiveUpdate(){
 
-    if (stats.currentVersion === 0 && enemies.E1.killCount>3) { did("outdatedData").style.display = "flex"; did("bodyCover").style.display = "flex"; items.I317.count++}
+    if (stats.currentVersion === undefined && enemies.E1.killCount>3) { did("outdatedData").style.display = "flex"; did("bodyCover").style.display = "flex"; items.I317.count++}
 
     if (items.I113.statUp!==0) items.I113.statUp = 25 
     if (items.I124.statUp!==0) items.I124.statUp = 35
     if (items.I128.statUp!==0) items.I128.statUp = 50
 
 
-    stats.currentVersion = 0.40;
+    if (stats.currentVersion<0.41){
+
+
+        strip()
+
+        items.I57.count = Math.ceil(items.I57.count / 55);
+        items.I165.count = Math.ceil(items.I165.count / 55);
+        items.I71.count = Math.ceil(items.I71.count / 55);
+        items.I100.count = Math.ceil(items.I100.count / 55);
+        sendMail("MS1")
+        
+    }
+
+    
+    
+
+    sanityCheck()
+    stats.currentVersion = 0.41;
+}
+
+
+function sanityCheck(){
+for (i in items){ if (!(equipCheck(i)) && items[i].sort==="equipable") {eval(items[i].remove)} }
 }
 
 function upgradesReveal(){
@@ -1833,7 +1857,72 @@ function upgradesReveal(){
 }
 
 
-
+function strip(){
+    rpgPlayer.feetSlot = 'none'
+rpgPlayer.headSlot = 'none'
+rpgPlayer.legsSlot = 'none'
+rpgPlayer.handsSlot = 'none'
+rpgPlayer.chestSlot = 'none'
+rpgPlayer.ringSlot = 'none'
+rpgPlayer.weaponSlot = 'none'
+rpgPlayer.trinketSlot = 'none'
+rpgPlayer.L1feetSlot = 'none'
+rpgPlayer.L1headSlot = 'none'
+rpgPlayer.L1legsSlot = 'none'
+rpgPlayer.L1handsSlot = 'none'
+rpgPlayer.L1chestSlot = 'none'
+rpgPlayer.L1ringSlot = 'none'
+rpgPlayer.L1weaponSlot = 'none'
+rpgPlayer.L1trinketSlot = 'none'
+rpgPlayer.L2feetSlot = 'none'
+rpgPlayer.L2headSlot = 'none'
+rpgPlayer.L2legsSlot = 'none'
+rpgPlayer.L2handsSlot = 'none'
+rpgPlayer.L2chestSlot = 'none'
+rpgPlayer.L2ringSlot = 'none'
+rpgPlayer.L2weaponSlot = 'none'
+rpgPlayer.L2trinketSlot = 'none'
+rpgPlayer.L3feetSlot = 'none'
+rpgPlayer.L3headSlot = 'none'
+rpgPlayer.L3legsSlot = 'none'
+rpgPlayer.L3handsSlot = 'none'
+rpgPlayer.L3chestSlot = 'none'
+rpgPlayer.L3ringSlot = 'none'
+rpgPlayer.L3weaponSlot = 'none'
+rpgPlayer.L3trinketSlot = 'none'
+rpgPlayer.L4feetSlot = 'none'
+rpgPlayer.L4headSlot = 'none'
+rpgPlayer.L4legsSlot = 'none'
+rpgPlayer.L4handsSlot = 'none'
+rpgPlayer.L4chestSlot = 'none'
+rpgPlayer.L4ringSlot = 'none'
+rpgPlayer.L4weaponSlot = 'none'
+rpgPlayer.L4trinketSlot = 'none'
+rpgPlayer.L5feetSlot = 'none'
+rpgPlayer.L5headSlot = 'none'
+rpgPlayer.L5legsSlot = 'none'
+rpgPlayer.L5handsSlot = 'none'
+rpgPlayer.L5chestSlot = 'none'
+rpgPlayer.L5ringSlot = 'none'
+rpgPlayer.L5weaponSlot = 'none'
+rpgPlayer.L5trinketSlot = 'none'
+rpgPlayer.L6feetSlot = 'none'
+rpgPlayer.L6headSlot = 'none'
+rpgPlayer.L6legsSlot = 'none'
+rpgPlayer.L6handsSlot = 'none'
+rpgPlayer.L6chestSlot = 'none'
+rpgPlayer.L6ringSlot = 'none'
+rpgPlayer.L6weaponSlot = 'none'
+rpgPlayer.L6trinketSlot = 'none'
+rpgPlayer.L7feetSlot = 'none'
+rpgPlayer.L7headSlot = 'none'
+rpgPlayer.L7legsSlot = 'none'
+rpgPlayer.L7handsSlot = 'none'
+rpgPlayer.L7chestSlot = 'none'
+rpgPlayer.L7ringSlot = 'none'
+rpgPlayer.L7weaponSlot = 'none'
+rpgPlayer.L7trinketSlot = 'none'
+}
 
 function tooltipUpgrades(i) {
     if (did(i+"upgrades")) {
@@ -1868,20 +1957,25 @@ function tooltipUpgrades(i) {
   }
 }
 
+let randomTab = rng(1,11)
 
-function randomTabName(){ //displays a random browser tab name
-    let random = rng(1,11);
-    if (random===1) document.title = "Your Turtle Is Working Hard"; 
-    if (random===2) document.title = "Where Is My Day Off?";
-    if (random===3) document.title = "They Shall Rise Again";
-    if (random===4) document.title = "Slaying Beasts";
-    if (random===5) document.title = "Exploring Uncharted Lands";
-    if (random===6) document.title = "Adventuring In Progress";
-    if (random===7) document.title = "Pat Pat Pat Pat Pat Pat Pat Pat";
-    if (random===8) document.title = "Grinding Materials";
-    if (random===9) document.title = "Super Turtle Idle";
-    if (random===10) document.title = "You Can Leave It To Me";
-    if (random===11) document.title = "Have You Seen Whiskers?";
+function randomTabName(icon){ //displays a random browser tab name
+    let random = randomTab;
+    let reminder = ""
+
+    if (icon==="plant") reminder = "[🌱!]";
+
+    if (random===1) document.title = reminder+" Your Turtle Is Working Hard"; 
+    if (random===2) document.title = reminder+" Where Is My Day Off?";
+    if (random===3) document.title = reminder+" They Shall Rise Again";
+    if (random===4) document.title = reminder+" Slaying Beasts";
+    if (random===5) document.title = reminder+" Exploring Uncharted Lands";
+    if (random===6) document.title = reminder+" Adventuring In Progress";
+    if (random===7) document.title = reminder+" Pat Pat Pat Pat Pat Pat Pat Pat";
+    if (random===8) document.title = reminder+" Grinding Materials";
+    if (random===9) document.title = reminder+" Super Turtle Idle";
+    if (random===10) document.title = reminder+" You Can Leave It To Me";
+    if (random===11) document.title = reminder+" Have You Seen Whiskers?";
 
 
 }

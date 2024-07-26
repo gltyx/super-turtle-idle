@@ -173,7 +173,7 @@ function logCheck() {
 
     //they have new names
     did('logHeaderBooks').innerHTML = 'Books Collected :<strong style="background:#4c5673">' + stats.logsGot+'/'+totalLogs +'</strong> <strong style="background:orange">['+Math.round(stats.logsGot/totalLogs*100)+'%]</strong>';
-    did('logHeaderInsight').innerHTML = 'Total Mastery: <strong style="background: #6eb1b8;">' + stats.logsGot*5+'</strong><img src="img/src/icons/insight.png">';
+    did('logHeaderInsight').innerHTML = 'Archive Mastery: <strong style="background: #6eb1b8;">' + stats.logsGot*5+'</strong><img src="img/src/icons/insight.png">';
     
 }
 
@@ -652,8 +652,14 @@ function createBestiary() {
     if (enemies[i].killCount>=1 || enemies[i].sawOnce) bestiaryPointEntry++
 
 
+    
+
+
     if (enemies[i].tag !== 'dungeonEnemy' && !enemies[i].noMedal && enemies[i].tag !== 'showdownBoss' && enemies[i].tag !== 'stageBoss1' && enemies[i].tag !== 'stageBoss2' && enemies[i].tag !== 'finalBoss')
          { enemies[i].medal = "none"; }//eligible
+
+
+    if (unlocks.bestiary){
 
 if (enemies[i].killCount>=10000
   && enemies[i].tag !== 'dungeonEnemy' && !enemies[i].noMedal && enemies[i].tag !== 'showdownBoss' && enemies[i].tag !== 'stageBoss1' && enemies[i].tag !== 'stageBoss2' && enemies[i].tag !== 'finalBoss')
@@ -670,6 +676,8 @@ if (enemies[i].killCount>=100000
       enemies[i].medal = "platinum";
 
   }
+
+}
 
 
   
@@ -700,7 +708,7 @@ if (enemies[i].killCount>=1 || enemies[i].sawOnce){
 bestiaryPercentage = ( ( bestiaryPointEntry + medalsGot ) / (totalBestiaryPoints) * 100 ) 
 did("bestiaryProgress").innerHTML = bestiaryPercentage.toFixed(1)+"%";
 did("bestiaryMastery").innerHTML = "+"+medalsGot*10+" Mastery";
-did("bestiaryProgress2").innerHTML = medalsGot+"/"+elibileEnemies+" Medals";
+did("bestiaryProgress2").innerHTML = medalsGot+"/"+(elibileEnemies+medalsGot)+" Medals";
 
 did("bestiaryProgressBar").style.width = bestiaryPercentage+'%';
 
