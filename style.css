@@ -659,6 +659,7 @@
     width: 100%;
     height: 100%;
     padding: 1rem 3rem;
+    overflow: scroll;
 }
 
 #gameGuideListing, #mailList {
@@ -6253,7 +6254,11 @@ background: rgba(34, 32, 38, 0.77);
     font-size: 1rem;
     transition: all 0.5s;
     pointer-events: none;
-    
+}
+
+.itemCount font{
+    font-weight: 700;
+    font-size: 1rem;
 }
 
 #logHeaderBooks{

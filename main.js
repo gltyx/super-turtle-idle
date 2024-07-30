@@ -672,7 +672,7 @@ function tooltipWeather() {
       if (stats.currentWeather==="rain"){
          did("tooltipName").textContent = "Rainy Day";
          did("tooltipFlavor").textContent = '"The sky is specially wet today."';
-         did("tooltipDescription").innerHTML = '<span style="color:#1EFF0C">❖ +1 Fishing Level</span>';
+         did("tooltipDescription").innerHTML = '<span style="color:#1EFF0C">❖ +1 Fishing Level<br>❖ Garden feels refreshed</span>';
       }
 
       if (stats.currentWeather==="snow"){
@@ -1155,7 +1155,7 @@ function calculateInactiveTime() { //calculates idle time
             did('idleTime').innerHTML = convertSecondsToHMS(secondsInactive);
             if (farmable && unlocks.penguins) offlineRewards((secondsInactive/60)*(playerPenguinPower/15));
             if (!settings.disablePenguinRecap && unlocks.penguins && farmable) { did("penguinRecap").style.display = "flex"; }
-            if (unlocks.garden){ for (let i = 0; i < Math.min(secondsInactive/10, 3000); i++) { plantTick("offline");} }
+            //if (unlocks.garden){ for (let i = 0; i < Math.min(secondsInactive/10, 3000); i++) { plantTick();} }
 
             
             
@@ -1791,13 +1791,15 @@ function unlocksReveal(){
     if (stats.questsCompleted>=12) sendMail("MR2");
     if (stats.questsCompleted>=19) sendMail("MR3");
     if (stats.questsCompleted>=26) sendMail("MR4");
-    if (stats.questsCompleted>=35) sendMail("MR5"); //garden
+    if (stats.questsCompleted>=37) sendMail("MR5"); //garden
 
     //flavor
     if (stats.questsCompleted>=4) sendMail("MF1"); //mom
     if (stats.questsCompleted>=16) sendMail("MF2"); //spam
     if (stats.questsCompleted>=22) sendMail("MF3"); //mom
     if (stats.questsCompleted>=29) sendMail("MF4"); //omious warning
+    if (stats.questsCompleted>=43) sendMail("MF5"); //mom
+    if (stats.questsCompleted>=48) sendMail("MF6"); //
 
     //other    
     if (enemies.E23.killCount>0) sendMail("MO1");
@@ -1832,11 +1834,12 @@ function retroactiveUpdate(){
         
     }
 
-    
-    
+    if (stats.currentVersion<0.42){ sendMail("MS2"); gametipUnlock("gt18")}
+
+
 
     sanityCheck()
-    stats.currentVersion = 0.41;
+    stats.currentVersion = 0.42;
 }
 
 
