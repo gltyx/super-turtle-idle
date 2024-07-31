@@ -2106,7 +2106,7 @@ did("stampMenu").style.display = "flex";
   if ("tierArmorBonus" in items[rpgPlayer[currentGear]]) gearSetbonus = items[rpgPlayer[currentGear]].tierArmorBonus
 
   var itemSkills = ""
-  if ("skills" in items[itemID]) { 
+  if ("skills" in items[rpgPlayer[currentGear]]) { 
     itemSkills = "<br>"+eval(items[rpgPlayer[currentGear]].skills)
   }
 
@@ -2198,6 +2198,25 @@ document.addEventListener('contextmenu', function(event) {
 
       if (!settings.disableAutoOpen){ //if a container
 
+        if (currentlyOpening===0 && items[itemID].count>9) autoOpenLocked()
+
+        function delay(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function autoOpenLocked() {
+          while (items[itemID].count > 1 && items[items[itemID].autoOpenLocked].count > 0) {
+            currentlyOpening = 1;
+            eval(items[itemID].use);
+            playSound("audio/thud.mp3");
+            addItem();
+            await delay(50);
+          }
+          currentlyOpening = 0;
+        }
+
+        /*
+
 
       if ("autoOpenLocked" in items[itemID] && items[itemID].count>9 && currentlyOpening === 0){
       for (let i = 0; i < Math.min(items[items[itemID].autoOpenLocked].count-1, items[itemID].count-1); i++) {
@@ -2221,6 +2240,11 @@ document.addEventListener('contextmenu', function(event) {
           }, i * 50); 
         }  
       }
+
+
+*/
+
+
 
     }
 
@@ -2391,13 +2415,13 @@ document.addEventListener('click', function(event) {
     }
 
     //UPGRADE--------------------------------------------
-    if (upgradeMode && "skills" in items[itemID]){
+    if (upgradeMode && "skills" in items[itemID] && (items[itemID].tag!=="mattock" && items[itemID].tag!=="rod") && !items[itemID].noUpgrade){
       upgradeItem = itemID;
       upgradeMenu()
   }
 
 
-  if (!vaultMode && !sellMode && !favoriteMode && !lockMode && settings.disableFastUpgrade && "skills" in items[itemID]){
+  if (!vaultMode && !sellMode && !favoriteMode && !lockMode && settings.disableFastUpgrade && "skills" in items[itemID] && (items[itemID].tag!=="mattock" && items[itemID].tag!=="rod") && !items[itemID].noUpgrade ){
     upgradeItem = itemID;
     upgradeMenu()
   } 
@@ -3105,7 +3129,7 @@ function stampStatUp(){
 
   const strengthValues = { "titan1": 0.1, "titan2": 0.2, "titan3": 0.3};
   const omniValues = { "omni1": 0.1, "omni2": 0.2, "omni3": 0.3};
-  const hasteValues = { "dynamo1": 0.03, "dynamo2": 0.06, "dynamo3": 0.12};
+  const hasteValues = { "dynamo1": 0.05, "dynamo2": 0.1, "dynamo3": 0.15};
   const luckValues = { "luck1": 0.1, "luck2": 0.2, "luck3": 0.3};
 
 
@@ -6776,6 +6800,7 @@ function openPresent(present) {
 
 
       let itemGot = rareItems[rng(0,(rareItems.length-1))]
+      if ((itemGot==="I209"&&items.I209.count>0)||(itemGot==="I210"&&items.I210.count>0)) itemGot = rareItems[rng(0,(rareItems.length-1))] //prevents duplicate time eggs
       div.innerHTML = '<img src="img/src/items/'+itemGot+'.jpg">x1 '+ items[itemGot].name;
       
       rareItemDrop(itemGot,1)
@@ -6812,11 +6837,13 @@ function openPresent(present) {
 
     if (present.startsWith("commonitem")) {
       let itemGot = rareItems[rng(0,(rareItems.length-1))]
+      if ((itemGot==="I209"&&items.I209.count>0)||(itemGot==="I210"&&items.I210.count>0)) itemGot = rareItems[rng(0,(rareItems.length-1))] //prevents duplicate time eggs
       div.innerHTML = '<img src="img/src/items/'+itemGot+'.jpg">x1 '+ items[itemGot].name; rareItemDrop(itemGot,1)
     }
 
     if (present.startsWith("rareitem")) {
       let itemGot = rareItems2[rng(0,(rareItems2.length-1))]
+      if ((itemGot==="I209"&&items.I209.count>0)||(itemGot==="I210"&&items.I210.count>0)) itemGot = rareItems[rng(0,(rareItems.length-1))] //prevents duplicate time eggs
       div.innerHTML = '<img src="img/src/items/'+itemGot+'.jpg">x1 '+ items[itemGot].name; rareItemDrop(itemGot,1)
       logs.P32.unlocked = true;
     }

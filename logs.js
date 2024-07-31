@@ -8,6 +8,16 @@ var playerInsight = 0;
 
 document.addEventListener("click", function(event) { if (event.target && event.target.closest("#P30log")) { logs.P30.unlocked = true; logCheck() } });
 
+
+document.addEventListener("click", function(event) {
+  if (event.target && event.target.id && event.target.id.endsWith("log") && rpgPlayer.debug) {
+      logs[event.target.id.replace("log", "")].unlocked=true
+      logCheck()
+  }
+});
+
+
+
 function calculateInsight(){
 
   let insightFromLogs = 0
@@ -420,7 +430,7 @@ function createArmory() {
 
 
     div.addEventListener("click", function (event) {
-      if (items[i].gotOnce && "skills" in items[i]){
+      if (items[i].gotOnce && "skills" in items[i] && (items[i].tag!=="mattock" && items[i].tag!=="rod") && !items[i].noUpgrade){
       closePanels();
       upgradeItem = i;
       upgradeMenu();
@@ -659,7 +669,7 @@ function createBestiary() {
 
 
     if (enemies[i].tag !== 'dungeonEnemy' && !enemies[i].noMedal && enemies[i].tag !== 'showdownBoss' && enemies[i].tag !== 'stageBoss1' && enemies[i].tag !== 'stageBoss2' && enemies[i].tag !== 'finalBoss')
-         { enemies[i].medal = "none"; }//eligible
+         { enemies[i].medal = "none"; totalBestiaryPoints++ }//eligible
 
 
     if (unlocks.bestiary){
