@@ -141,7 +141,8 @@ function spawnEnemy(enemy) { //spawns enemy based on current difficulty and area
 
 
   if (buffs.B67.time>0 && currentEnemy!=="E15"){ //caltrops
-    currentHP -= Math.min((currentHP-1), (playerWeaponDamage*0.2)*playerSpellpower);
+    //currentHP -= Math.min((currentHP-1), (playerWeaponDamage*0.2)*playerSpellpower);
+    enemyBasicDamage(Math.min(playerWeaponDamage*0.2*playerSpellpower*Math.pow(1.005, playerMastery), currentHP-1),"zeroScale")
     enemyUpdate();
   }
 
@@ -2278,7 +2279,7 @@ document.addEventListener('contextmenu', function(event) {
       
       if(items[itemID].count<1) resetTooltip()
 
-      if (!settings.disableAutoOpen){ //if a container
+      if (!settings.disableAutoOpen && "autoOpenLocked" in items[itemID]){ //if a container
 
         if (currentlyOpening===0 && items[itemID].count>9) autoOpenLocked()
 
